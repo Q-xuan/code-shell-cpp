@@ -2,21 +2,21 @@
 #include <string>
 
 int main() {
-    // Flush after every std::cout / std:cerr
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
 
-    // TODO: Uncomment the code below to pass the first stage
-    std::cout << "$ ";
-
     std::string command;
-    //读取内容
-    while (true) {
-        std::getline(std::cin, command);
+    std::cout << "$ ";  // 初始提示符
 
-        if (command != "echo" || command != "cd") {
-            std::cout << command << ": command not found" << std::endl;
-            return 1;
+    while (std::getline(std::cin, command)) {
+        if (command == "exit") {
+            return 0;
         }
+
+        std::cout << command << ": command not found" << std::endl;
+        std::cout << "$ ";
     }
+
+    std::cout << std::endl;
+    return 0;
 }
