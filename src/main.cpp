@@ -11,10 +11,12 @@ int main() {
 
     std::string command;
     //读取内容
-    std::getline(std::cin, command);
+    while (true) {
+        std::getline(std::cin, command);
 
-    if (command != "echo" || command != "cd") {
-        std::cout << command << ": command not found" << std::endl;
-        return 1;
+        if (command != "echo" || command != "cd") {
+            std::cout << command << ": command not found" << std::endl;
+            return 1;
+        }
     }
 }
