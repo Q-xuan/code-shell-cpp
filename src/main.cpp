@@ -10,7 +10,9 @@ int exitMethod(const std::string &arg) {
     return code;
 }
 
-void echoMethod(const std::string &arg) {
+void echoMethod(std::string arg) {
+    if (!arg.empty() && arg[0] == ' ')
+        arg.erase(0, 1);
     std::cout << arg << std::endl;
 }
 
