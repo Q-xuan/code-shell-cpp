@@ -2,6 +2,18 @@
 #include <string>
 #include <sstream>
 
+int exitMethod(const std::string &arg) {
+    int code = 0;
+    if (!arg.empty()) {
+        code = std::stoi(arg);
+    }
+    return code;
+}
+
+void echoMethod(const std::string &arg) {
+    std::cout << arg << std::endl;
+}
+
 int main() {
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
@@ -15,14 +27,16 @@ int main() {
         std::string arg;
 
         //解析出第一个和第二个单词
-        iss >> cmd >> arg;
+        iss >> cmd;
 
         if (cmd == "exit") {
-            int code = 0;
-            if (!arg.empty()) {
-                code = std::stoi(arg);
-            }
-            return code;
+            iss >> arg;
+            return exitMethod(arg);
+        }
+
+        if (cmd == "echo") {
+            std::getline(iss, arg);
+            echoMethod(arg);
         }
 
         std::cout << cmd << ": command not found" << std::endl;
