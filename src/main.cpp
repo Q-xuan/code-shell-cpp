@@ -39,10 +39,11 @@ int main() {
         if (cmd == "echo") {
             std::getline(iss, arg);
             echoMethod(arg);
-            continue;
+        } else {
+            std::cout << cmd << ": command not found" << std::endl;
         }
 
-        std::cout << cmd << ": command not found" << std::endl;
+
         std::cout << "$ ";
     }
 
