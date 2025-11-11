@@ -9,22 +9,32 @@
 //查询文件是否存在并且是否是可执行的
 bool isExecutable(const std::string &path) {
     const std::filesystem::path filePath(path);
-    return std::filesystem::exists(filePath) && std::filesystem::is_regular_file(filePath) && (std::filesystem::status(filePath).permissions() & std::filesystem::perms::owner_exec) != std::filesystem::perms::none;
+    return std::filesystem::exists(filePath) && std::filesystem::is_regular_file(filePath) && (
+               std::filesystem::status(filePath).permissions() & std::filesystem::perms::owner_exec) !=
+           std::filesystem::perms::none;
+}
+
+void executeCommand(const std::string &command, const std::string &args) {
+    std::string cmdLine = command;
+    if (!args.empty()) {
+        cmdLine += " " + args;
+    }
+    std::system(cmdLine.c_str());
 }
 
 // 查找命令
-void findCommandPath(const std::string& command) {
-    if (const char* path = std::getenv("PATH")) {
+void findCommandPath(const std::string &command, const std::string &args) {
+    if (const char *path = std::getenv("PATH")) {
         const std::string path_str = path;
         std::stringstream ss(path_str);
         std::string token;
 
         // 遍历 PATH 中的每个目录
         while (std::getline(ss, token, ':')) {
-            std::string command_path = token + "/" + command;
-            if (isExecutable(command_path)) {
-                std::cout << command << " is " << command_path << std::endl;
-                return;  // 找到命令后返回
+            if (std::string command_path = token + "/" + command; isExecutable(command_path)) {
+                // std::cout << command << " is " << command_path << std::endl;
+                executeCommand(command_path, args);
+                return; // 找到命令后返回
             }
         }
     }
@@ -52,18 +62,16 @@ int exitMethod(const std::string &arg) {
     return code;
 }
 
-int typeMethod(const std::string &arg,
-               const std::map<std::string, std::function<int(const std::string &)>> &commands) {
-    if (const auto it = commands.find(arg); it != commands.end()) {
-        std::cout << arg << " is a shell builtin" << std::endl;
-        return 0;
-    }
 
-    // 如果不是内建命令，则调用路径查找函数
-    findCommandPath(arg);
+int typeMethod(const std::string &arg,
+               const std::map<std::string, std::function<int(const std::string &)> > &commands) {
+    if (const auto it = commands.find(arg); it == commands.end()) {
+        std::cout << arg << ": not found" << std::endl;
+        return -1;
+    }
+    std::cout << arg << " is a shell builtin" << std::endl;
     return 0;
 }
-
 
 int main() {
     std::cout << std::unitbuf;
@@ -101,7 +109,7 @@ int main() {
                 return code;
             }
         } else {
-            std::cout << cmd << ": command not found" << std::endl;
+            findCommandPath(cmd, arg);
         }
 
 
